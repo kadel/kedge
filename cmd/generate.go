@@ -21,6 +21,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+
 	pkgcmd "github.com/kedgeproject/kedge/pkg/cmd"
 )
 

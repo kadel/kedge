@@ -23,8 +23,8 @@ import (
 	"strings"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/pkg/errors"
 	"github.com/kedgeproject/kedge/pkg/spec"
+	"github.com/pkg/errors"
 	"k8s.io/client-go/pkg/api"
 	"k8s.io/client-go/pkg/api/resource"
 	"k8s.io/client-go/pkg/runtime"
@@ -289,6 +289,53 @@ func populateContainerHealth(app *spec.App) error {
 	return nil
 }
 
+func populateEnvFrom(app *spec.App) error {
+	// iterate on the containers so that we can extract envFrom
+	// that we have custom defined
+	for ci, c := range app.Containers {
+		for ei, e := range c.EnvFrom {
+			cmName := e.ConfigMapRef.Name
+
+			// we also need to check if the configMap specified if it exists
+			var cmFound bool
+			// to populate the envs we also need to know the data
+			// from configmaps defined in the app
+			for _, cm := range app.ConfigMaps {
+				// we will only populate the configMap that is specified
+				// not every configMap out there
+				if cm.Name != cmName {
+					continue
+				}
+				// start populating
+				for k, _ := range cm.Data {
+					// here we are directly referring to the containers
+					// from app.PodSpec.Containers because that is where data
+					// is parsed into so populating that is more valid thing to do
+					app.PodSpec.Containers[ci].Env = append(app.PodSpec.Containers[ci].Env, api_v1.EnvVar{
+						Name: k,
+						ValueFrom: &api_v1.EnvVarSource{
+							ConfigMapKeyRef: &api_v1.ConfigMapKeySelector{
+								LocalObjectReference: api_v1.LocalObjectReference{
+									Name: cmName,
+								},
+								Key: k,
+							},
+						},
+					})
+				}
+				cmFound = true
+				// once the population is done we exit out of the loop
+				// we don't need to check other configMaps
+				break
+			}
+			if !cmFound {
+				return fmt.Errorf("undefined configMap in app.containers[%d].envFrom[%d].configMapRef.name", ci, ei)
+			}
+		}
+	}
+	return nil
+}
+
 func CreateK8sObjects(app *spec.App) ([]runtime.Object, error) {
 	var objects []runtime.Object
 
@@ -308,6 +355,11 @@ func CreateK8sObjects(app *spec.App) ([]runtime.Object, error) {
 
 	// withdraw the health and populate actual pod spec
 	if err := populateContainerHealth(app); err != nil {
+		return nil, errors.Wrapf(err, "app %q", app.Name)
+	}
+
+	// withdraw the envFrom and populate actual containers
+	if err := populateEnvFrom(app); err != nil {
 		return nil, errors.Wrapf(err, "app %q", app.Name)
 	}
 
