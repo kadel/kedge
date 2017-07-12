@@ -1,9 +1,13 @@
 dist: trusty
 
 language: go
-
-# make this also work for forks
+# make it work for forks
 go_import_path: github.com/kedgeproject/kedge
+
+env:
+  global:
+    - secure: LzOXtr0dsNzunATJfzWrtLKrHd8DfQmV2ptLTN6bp7vw1qu8phF3YsTJvEXeoR5zZ/A3ugVuibv49/QZBPuVkQ7XXp3/6f3lKGuMrC+Q2u2z3WucrZldBLAeSVx+020s8UJA3aqJUrPWx/tqLPWK3KY7s5S3XX+Lp5J955FxSBb289wtUmfTwf4mclUY+DzmZwROhVVZkdJJ767oAE5kiLnUcR0A2keTFai2rX4PdbnfShDyB0PHVWU+Xop5UO+biiV1RgwODIOxzcxGPvEo6cYO0qEpIfa1WmMfF499Dp7ltMruqUcIraZ/8Q3a8Ilda1ZxLhIoOrxFAV/DAUW4B8ygDPDf6aoPopl+baqfIR/qVzPzzS+Ru0gFFqwAEnq5FWP03RS9mR2D2XDUEIgAl3tRPfcwUCPXs0b5rnzx/pq9VUupENBCtz5QBEbT67OlHPCZ90eeG2KNlyoTQ97ujhPvqXHB6ZUYUy7oLw/VMUzGSvkfJKD7ygZRhVP8s3c8msXZUZV0vPw1/bRvFy7haV6oibIfI/CdZii6hYrY198t1/IaL4/rOEEN09ADap/gb/s4j6Lcvpl8CHsrJEDHIuIFDTNw83aUIv2oAS7Vir0SGGmO4BaL67nUAJneAAxQ5gRDFGnAGoCZSIWLNFvXztQPPYuu+VZ86B8ozjQmbK4=
+    - secure: Y5CdbA3Era17WDkW0wsKdBkAnuuHxPQmzfjRik4F70fIJKxTO/6Wk0uY0lUiXkhmHaacYX0KxO1SCbQcAhn1SIKRiClxZ0lDSo/uYIJlHPkMj+l8hTBfSxAC2zfrogN8AwN+Hm2/1M8Q77kjUguJQDpogQZ1Clx4YYL4x5wM0//whT3SRY+UT41Jjbxch158P5tjwxTRrhxcLY5m9QHGcY/jrHYiw4jTh2nS+ayWfxlj3FV+8Nt1wWl7C2nCRykCIP6FdcK/QzrV/g+MDdfldDGoNZf1X6nzxFaie2TgnztkbSvTRxBi8f7UgiMyQPIqZfWZzySOyzJn5w3JwivSI5EJhtEjsxV/N0yqR/UQIj3BjbL1RXz+hVoDJ+YPkRSElrCyPKuiNW6hJvOzJJNwfs5A9G7jI71JlFs2i0fYQAUURHMGtPUTUPZKPMkAksN9Qz8wyyd8wX9nRQ4y3HZyl4A5dNYJjg4bI1bFzYGyGH/ENCIdmmwdYdsDOmLFWc9gycu325XjvyO22qLg00AHLSOm6cfncoAPL24IQmvXz/y9y06hmwiYTESc6oOZqapeoki0xKEe+qOQYrInlhLBvwSuSsA7JT9Biq3hgYLB8sQFt/vU1oxlIsecOoU6usFTyil/oDoFs0VWO2PxjfCk7gboyWP9In6H5rmb/b30hlo=
 
 matrix:
   include:
@@ -17,4 +21,21 @@ install:
   - true
 
 script:
+  - make bin
   - make test
+  - env
+
+before_deploy:
+  - ./scripts/generate-bintray-json.sh
+
+deploy:
+  provider: bintray
+  file: ./.bintray.json
+  user: "${BINTRAY_USER}"
+  key: "${BINTRAY_KEY}"
+  skip_cleanup: true
+  on:
+    branch: "master"
+    go: 1.8
+
+
