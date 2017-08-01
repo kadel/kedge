@@ -21,8 +21,8 @@ install:
   - true
 
 script:
-  - make test
-
+  - make travis-tests
+  
 before_deploy:
   - make cross
   - ./scripts/generate-bintray-json.sh
@@ -39,3 +39,5 @@ deploy:
     go: 1.8
 
 
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
