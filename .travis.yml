@@ -39,3 +39,7 @@ deploy:
     go: 1.8
 
 
+after_success:
+  # gover collects all .coverprofile files and saves it to one file gover.coverprofile
+  - gover
+  - goveralls -coverprofile=gover.coverprofile -service=travis-ci
