@@ -1,32 +1,39 @@
 package: github.com/kedgeproject/kedge
 import:
+
 - package: github.com/ghodss/yaml
   version: v1.0.0
+
 - package: github.com/spf13/cobra
+
 # pinning pflag to v1.0.0 because cobra complains if this is not done
 - package: github.com/spf13/pflag
   version: v1.0.0
+
 - package: github.com/spf13/viper
+
 - package: github.com/pkg/errors
   version: v0.8.0
+
 - package: github.com/davecgh/go-spew
   version: v1.1.0
   subpackages:
   - spew
-- package: k8s.io/client-go
-  version: v4.0.0
-  subpackages:
-  - pkg/api
-  - pkg/api/install
-  - pkg/api/v1
-  - pkg/apis/extensions/install
-  - pkg/apis/extensions/v1beta1
-  - kubernetes/typed/admissionregistration/v1alpha1
-- package: k8s.io/apimachinery
-  subpackages:
-  - pkg/api/resource
-  - pkg/apis/meta/v1
-  - pkg/runtime
-  - pkg/util/intstr
+
 - package: github.com/Sirupsen/logrus
   version: v1.0.2
+
+- package: github.com/openshift/origin
+  version: v3.6.0
+
+# Those are packages that are OpenShift modifies in its vendor directory.
+# We have to ignore tham here so they are not downloaded.
+# We have to use modfied version of those packages from github.com/openshift/orogin/vendor,
+# otherwise OpenShift won't build.
+# For a bit more information see https://github.com/openshift/origin/pull/15797
+ignore:
+  - k8s.io/kubernetes
+  - k8s.io/apimachinery
+  - k8s.io/client-go
+  - k8s.io/apiserver
+  - k8s.io/kube-aggregator
