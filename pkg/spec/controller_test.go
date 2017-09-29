@@ -20,7 +20,7 @@ import (
 	"reflect"
 	"testing"
 
-	api_v1 "k8s.io/client-go/pkg/api/v1"
+	api_v1 "k8s.io/kubernetes/pkg/api/v1"
 )
 
 func TestUnmarshalValidateFixControllerOperations(t *testing.T) {

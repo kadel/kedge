@@ -22,9 +22,9 @@ import (
 	"encoding/json"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/client-go/pkg/api"
-	api_v1 "k8s.io/client-go/pkg/api/v1"
-	batch_v1 "k8s.io/client-go/pkg/apis/batch/v1"
+	"k8s.io/kubernetes/pkg/api"
+	api_v1 "k8s.io/kubernetes/pkg/api/v1"
+	batch_v1 "k8s.io/kubernetes/pkg/apis/batch/v1"
 )
 
 // This function will search in the pod level volumes

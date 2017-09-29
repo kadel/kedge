@@ -20,8 +20,8 @@ import (
 	"testing"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
-	api_v1 "k8s.io/client-go/pkg/api/v1"
-	batch_v1 "k8s.io/client-go/pkg/apis/batch/v1"
+	api_v1 "k8s.io/kubernetes/pkg/api/v1"
+	batch_v1 "k8s.io/kubernetes/pkg/apis/batch/v1"
 	"reflect"
 )
 

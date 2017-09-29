@@ -17,9 +17,10 @@ limitations under the License.
 package spec
 
 import (
-	api_v1 "k8s.io/client-go/pkg/api/v1"
-	batch_v1 "k8s.io/client-go/pkg/apis/batch/v1"
-	ext_v1beta1 "k8s.io/client-go/pkg/apis/extensions/v1beta1"
+	os_deploy_v1 "github.com/openshift/origin/pkg/deploy/apis/apps/v1"
+	api_v1 "k8s.io/kubernetes/pkg/api/v1"
+	batch_v1 "k8s.io/kubernetes/pkg/apis/batch/v1"
+	ext_v1beta1 "k8s.io/kubernetes/pkg/apis/extensions/v1beta1"
 )
 
 // VolumeClaim is used to define Persistent Volumes for app
@@ -190,4 +191,9 @@ type JobSpecMod struct {
 
 type Controller struct {
 	Controller string `json:"controller,omitempty"`
+}
+
+type DeploymentConfigSpecMod struct {
+	ControllerFields                  `json:",inline"`
+	os_deploy_v1.DeploymentConfigSpec `json:",inline"`
 }

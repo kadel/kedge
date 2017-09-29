@@ -53,6 +53,8 @@ func GetController(data []byte) (ControllerInterface, error) {
 		return &DeploymentSpecMod{}, nil
 	case "job":
 		return &JobSpecMod{}, nil
+	case "deploymentconfig":
+		return &DeploymentConfigSpecMod{}, nil
 	default:
 		return nil, fmt.Errorf("invalid controller: %v", specController.Controller)
 	}

@@ -25,7 +25,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
-	api_v1 "k8s.io/client-go/pkg/api/v1"
+	api_v1 "k8s.io/kubernetes/pkg/api/v1"
 )
 
 func TestFixServices(t *testing.T) {
