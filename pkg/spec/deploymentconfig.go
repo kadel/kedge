@@ -20,7 +20,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/ghodss/yaml"
-	os_v1 "github.com/kedgeproject/kedge/pkg/hack/openshift"
+	os_deploy_v1 "github.com/openshift/origin/pkg/deploy/apis/apps/v1"
 	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -133,8 +133,8 @@ func (deployment *DeploymentConfigSpecMod) Transform() ([]runtime.Object, []stri
 }
 
 // TODO: Rather than return blank, return fully usable DeploymentConfig
-func (deployment *DeploymentConfigSpecMod) createDeploymentConfigController() (*os_v1.DeploymentConfig, error) {
-	return &os_v1.DeploymentConfig{
+func (deployment *DeploymentConfigSpecMod) createDeploymentConfigController() (*os_deploy_v1.DeploymentConfig, error) {
+	return &os_deploy_v1.DeploymentConfig{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "DeploymentConfig",
 			APIVersion: "v1",
@@ -143,6 +143,6 @@ func (deployment *DeploymentConfigSpecMod) createDeploymentConfigController() (*
 			Name:   deployment.Name,
 			Labels: deployment.Labels,
 		},
-		Spec: os_v1.DeploymentConfigSpec{},
+		Spec: os_deploy_v1.DeploymentConfigSpec{},
 	}, nil
 }

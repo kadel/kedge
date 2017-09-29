@@ -17,7 +17,7 @@ limitations under the License.
 package spec
 
 import (
-	os_v1 "github.com/kedgeproject/kedge/pkg/hack/openshift"
+	os_deploy_v1 "github.com/openshift/origin/pkg/deploy/apis/apps/v1"
 	api_v1 "k8s.io/client-go/pkg/api/v1"
 	batch_v1 "k8s.io/client-go/pkg/apis/batch/v1"
 	ext_v1beta1 "k8s.io/client-go/pkg/apis/extensions/v1beta1"
@@ -199,6 +199,6 @@ type JobSpecMod struct {
 // DeploymentConfigSpecMod is Kedge's extension of OpenShift DeploymentConfig in order to define and allow
 // a complete kedge app based on OpenShift
 type DeploymentConfigSpecMod struct {
-	ControllerFields       `json:",inline"`
-	os_v1.DeploymentConfig `json:",inline"`
+	ControllerFields              `json:",inline"`
+	os_deploy_v1.DeploymentConfig `json:",inline"`
 }
