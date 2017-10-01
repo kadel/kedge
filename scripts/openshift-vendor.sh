@@ -104,6 +104,8 @@ rm -rf $TMP_OPENSHIFT/vendor $TMP_OPENSHIFT/.git
 
 # now move OpenShift itself to project vendor
 echo "Moving OpenShift to project vendor directory"
+rm -rf $PROJECT_VENDOR/github.com/openshift/origin
+mkdir -p $PROJECT_VENDOR/github.com/openshift/
 mv $TMP_OPENSHIFT $PROJECT_VENDOR/github.com/openshift/origin
 
 echo "DONE."
