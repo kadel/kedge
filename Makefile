@@ -86,11 +86,11 @@ endif
 
 # Run all tests
 .PHONY: test
-test: test-dep check-vendor validate test-unit
+test: test-dep validate test-unit
 
 # Tests that are run on travs-ci
 .PHONY: travis-tests
-travis-tests: test-dep check-vendor validate test-unit-cover
+travis-tests: test-dep validate test-unit-cover
 
 # Install all the required test-dependencies before executing tests (only valid when running `make test`)
 .PHONY: test-dep
