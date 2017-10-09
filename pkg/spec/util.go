@@ -23,11 +23,11 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/util/intstr"
-	"k8s.io/client-go/pkg/api"
-	api_v1 "k8s.io/client-go/pkg/api/v1"
-	batch_v1 "k8s.io/client-go/pkg/apis/batch/v1"
-	kapi "k8s.io/kubernetes/pkg/api/v1"
+	//"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/kubernetes/pkg/api"
+	api_v1 "k8s.io/kubernetes/pkg/api/v1"
+	//kapi "k8s.io/kubernetes/pkg/api/v1"
+	batch_v1 "k8s.io/kubernetes/pkg/apis/batch/v1"
 )
 
 // This function will search in the pod level volumes
@@ -120,188 +120,188 @@ func addKeyValueToMap(k string, v string, m map[string]string) map[string]string
 	return m
 }
 
-// Converts from k8s.io/kubernetes/pkg/api/v1 to client-go
-// due to kedge requiring client-go but OpenShift using k8s/io/kubernetes
-// This function converts a pod spec to kapi.PodSpec
-func ConvertPodSpec(pod api_v1.PodSpec) kapi.PodSpec {
+// // Converts from k8s.io/kubernetes/pkg/api/v1 to kubernetes
+// // due to kedge requiring kubernetes but OpenShift using k8s/io/kubernetes
+// // This function converts a pod spec to kapi.PodSpec
+// func ConvertPodSpec(pod api_v1.PodSpec) kapi.PodSpec {
 
-	containers := []kapi.Container{}
-	for _, container := range pod.Containers {
+// 	containers := []kapi.Container{}
+// 	for _, container := range pod.Containers {
 
-		// Add all keys which don't use custom structs
-		con := kapi.Container{
-			Name:                     container.Name,
-			Image:                    container.Image,
-			Command:                  container.Command,
-			Args:                     container.Args,
-			WorkingDir:               container.WorkingDir,
-			TerminationMessagePath:   container.TerminationMessagePath,
-			TerminationMessagePolicy: kapi.TerminationMessagePolicy(container.TerminationMessagePolicy),
-			ImagePullPolicy:          kapi.PullPolicy(container.ImagePullPolicy),
-			Stdin:                    container.Stdin,
-			StdinOnce:                container.StdinOnce,
-			TTY:                      container.TTY,
-		}
+// 		// Add all keys which don't use custom structs
+// 		con := kapi.Container{
+// 			Name:                     container.Name,
+// 			Image:                    container.Image,
+// 			Command:                  container.Command,
+// 			Args:                     container.Args,
+// 			WorkingDir:               container.WorkingDir,
+// 			TerminationMessagePath:   container.TerminationMessagePath,
+// 			TerminationMessagePolicy: kapi.TerminationMessagePolicy(container.TerminationMessagePolicy),
+// 			ImagePullPolicy:          kapi.PullPolicy(container.ImagePullPolicy),
+// 			Stdin:                    container.Stdin,
+// 			StdinOnce:                container.StdinOnce,
+// 			TTY:                      container.TTY,
+// 		}
 
-		// TODO: (too difficult to implement at the moment, will need to be implemented in the future)
-		// Resources
-		// Lifecycle
-		// SecurityContext
+// 		// TODO: (too difficult to implement at the moment, will need to be implemented in the future)
+// 		// Resources
+// 		// Lifecycle
+// 		// SecurityContext
 
-		// Ports
-		for _, port := range container.Ports {
-			con.Ports = append(con.Ports, kapi.ContainerPort{
-				Name:          port.Name,
-				HostPort:      port.HostPort,
-				ContainerPort: port.ContainerPort,
-				HostIP:        port.HostIP,
-				Protocol:      kapi.Protocol(port.Protocol),
-			})
-		}
+// 		// Ports
+// 		for _, port := range container.Ports {
+// 			con.Ports = append(con.Ports, kapi.ContainerPort{
+// 				Name:          port.Name,
+// 				HostPort:      port.HostPort,
+// 				ContainerPort: port.ContainerPort,
+// 				HostIP:        port.HostIP,
+// 				Protocol:      kapi.Protocol(port.Protocol),
+// 			})
+// 		}
 
-		// EnvFrom
-		for _, envFrom := range container.EnvFrom {
+// 		// EnvFrom
+// 		for _, envFrom := range container.EnvFrom {
 
-			e := kapi.EnvFromSource{
-				Prefix: envFrom.Prefix,
-			}
+// 			e := kapi.EnvFromSource{
+// 				Prefix: envFrom.Prefix,
+// 			}
 
-			if envFrom.ConfigMapRef != nil {
-				e.ConfigMapRef = &kapi.ConfigMapEnvSource{
-					LocalObjectReference: kapi.LocalObjectReference{
-						Name: envFrom.ConfigMapRef.LocalObjectReference.Name,
-					},
-					Optional: envFrom.ConfigMapRef.Optional,
-				}
-			}
+// 			if envFrom.ConfigMapRef != nil {
+// 				e.ConfigMapRef = &kapi.ConfigMapEnvSource{
+// 					LocalObjectReference: kapi.LocalObjectReference{
+// 						Name: envFrom.ConfigMapRef.LocalObjectReference.Name,
+// 					},
+// 					Optional: envFrom.ConfigMapRef.Optional,
+// 				}
+// 			}
 
-			con.EnvFrom = append(con.EnvFrom, e)
-		}
+// 			con.EnvFrom = append(con.EnvFrom, e)
+// 		}
 
-		// Env
-		for _, env := range container.Env {
-			e := kapi.EnvVar{
-				Name:      env.Name,
-				Value:     env.Value,
-				ValueFrom: &kapi.EnvVarSource{},
-			}
+// 		// Env
+// 		for _, env := range container.Env {
+// 			e := kapi.EnvVar{
+// 				Name:      env.Name,
+// 				Value:     env.Value,
+// 				ValueFrom: &kapi.EnvVarSource{},
+// 			}
 
-			if env.ValueFrom != nil {
+// 			if env.ValueFrom != nil {
 
-				if env.ValueFrom.FieldRef != nil {
-					e.ValueFrom.FieldRef = &kapi.ObjectFieldSelector{
-						APIVersion: env.ValueFrom.FieldRef.APIVersion,
-						FieldPath:  env.ValueFrom.FieldRef.FieldPath,
-					}
-				}
+// 				if env.ValueFrom.FieldRef != nil {
+// 					e.ValueFrom.FieldRef = &kapi.ObjectFieldSelector{
+// 						APIVersion: env.ValueFrom.FieldRef.APIVersion,
+// 						FieldPath:  env.ValueFrom.FieldRef.FieldPath,
+// 					}
+// 				}
 
-				if env.ValueFrom.ResourceFieldRef != nil {
-					e.ValueFrom.ResourceFieldRef = &kapi.ResourceFieldSelector{
-						ContainerName: env.ValueFrom.ResourceFieldRef.ContainerName,
-						Resource:      env.ValueFrom.ResourceFieldRef.Resource,
-						// TODO Divisor
-					}
-				}
+// 				if env.ValueFrom.ResourceFieldRef != nil {
+// 					e.ValueFrom.ResourceFieldRef = &kapi.ResourceFieldSelector{
+// 						ContainerName: env.ValueFrom.ResourceFieldRef.ContainerName,
+// 						Resource:      env.ValueFrom.ResourceFieldRef.Resource,
+// 						// TODO Divisor
+// 					}
+// 				}
 
-				if env.ValueFrom.ConfigMapKeyRef != nil {
-					e.ValueFrom.ConfigMapKeyRef = &kapi.ConfigMapKeySelector{
-						LocalObjectReference: kapi.LocalObjectReference{
-							Name: env.ValueFrom.ConfigMapKeyRef.LocalObjectReference.Name,
-						},
-						Key:      env.ValueFrom.ConfigMapKeyRef.Key,
-						Optional: env.ValueFrom.ConfigMapKeyRef.Optional,
-					}
-				}
+// 				if env.ValueFrom.ConfigMapKeyRef != nil {
+// 					e.ValueFrom.ConfigMapKeyRef = &kapi.ConfigMapKeySelector{
+// 						LocalObjectReference: kapi.LocalObjectReference{
+// 							Name: env.ValueFrom.ConfigMapKeyRef.LocalObjectReference.Name,
+// 						},
+// 						Key:      env.ValueFrom.ConfigMapKeyRef.Key,
+// 						Optional: env.ValueFrom.ConfigMapKeyRef.Optional,
+// 					}
+// 				}
 
-				if env.ValueFrom.SecretKeyRef != nil {
-					e.ValueFrom.SecretKeyRef = &kapi.SecretKeySelector{
-						LocalObjectReference: kapi.LocalObjectReference{
-							Name: env.ValueFrom.SecretKeyRef.LocalObjectReference.Name,
-						},
-						Key:      env.ValueFrom.SecretKeyRef.Key,
-						Optional: env.ValueFrom.SecretKeyRef.Optional,
-					}
-				}
-			}
+// 				if env.ValueFrom.SecretKeyRef != nil {
+// 					e.ValueFrom.SecretKeyRef = &kapi.SecretKeySelector{
+// 						LocalObjectReference: kapi.LocalObjectReference{
+// 							Name: env.ValueFrom.SecretKeyRef.LocalObjectReference.Name,
+// 						},
+// 						Key:      env.ValueFrom.SecretKeyRef.Key,
+// 						Optional: env.ValueFrom.SecretKeyRef.Optional,
+// 					}
+// 				}
+// 			}
 
-			con.Env = append(con.Env, e)
-		}
+// 			con.Env = append(con.Env, e)
+// 		}
 
-		// VolumeMounts
-		for _, volume := range container.VolumeMounts {
-			con.VolumeMounts = append(con.VolumeMounts, kapi.VolumeMount{
-				Name:      volume.Name,
-				ReadOnly:  volume.ReadOnly,
-				MountPath: volume.MountPath,
-				SubPath:   volume.SubPath,
-			})
-		}
+// 		// VolumeMounts
+// 		for _, volume := range container.VolumeMounts {
+// 			con.VolumeMounts = append(con.VolumeMounts, kapi.VolumeMount{
+// 				Name:      volume.Name,
+// 				ReadOnly:  volume.ReadOnly,
+// 				MountPath: volume.MountPath,
+// 				SubPath:   volume.SubPath,
+// 			})
+// 		}
 
-		// LivenessProbe
-		if container.LivenessProbe != nil {
+// 		// LivenessProbe
+// 		if container.LivenessProbe != nil {
 
-			con.LivenessProbe = &kapi.Probe{
-				InitialDelaySeconds: container.LivenessProbe.InitialDelaySeconds,
-				TimeoutSeconds:      container.LivenessProbe.TimeoutSeconds,
-				PeriodSeconds:       container.LivenessProbe.PeriodSeconds,
-				SuccessThreshold:    container.LivenessProbe.SuccessThreshold,
-				FailureThreshold:    container.LivenessProbe.FailureThreshold,
-			}
+// 			con.LivenessProbe = &kapi.Probe{
+// 				InitialDelaySeconds: container.LivenessProbe.InitialDelaySeconds,
+// 				TimeoutSeconds:      container.LivenessProbe.TimeoutSeconds,
+// 				PeriodSeconds:       container.LivenessProbe.PeriodSeconds,
+// 				SuccessThreshold:    container.LivenessProbe.SuccessThreshold,
+// 				FailureThreshold:    container.LivenessProbe.FailureThreshold,
+// 			}
 
-			con.LivenessProbe.Handler = convertHandler(container.LivenessProbe.Handler)
+// 			con.LivenessProbe.Handler = convertHandler(container.LivenessProbe.Handler)
 
-		}
+// 		}
 
-		// ReadinessProbe
-		if container.ReadinessProbe != nil {
+// 		// ReadinessProbe
+// 		if container.ReadinessProbe != nil {
 
-			con.ReadinessProbe = &kapi.Probe{
-				InitialDelaySeconds: container.ReadinessProbe.InitialDelaySeconds,
-				TimeoutSeconds:      container.ReadinessProbe.TimeoutSeconds,
-				PeriodSeconds:       container.ReadinessProbe.PeriodSeconds,
-				SuccessThreshold:    container.ReadinessProbe.SuccessThreshold,
-				FailureThreshold:    container.ReadinessProbe.FailureThreshold,
-			}
+// 			con.ReadinessProbe = &kapi.Probe{
+// 				InitialDelaySeconds: container.ReadinessProbe.InitialDelaySeconds,
+// 				TimeoutSeconds:      container.ReadinessProbe.TimeoutSeconds,
+// 				PeriodSeconds:       container.ReadinessProbe.PeriodSeconds,
+// 				SuccessThreshold:    container.ReadinessProbe.SuccessThreshold,
+// 				FailureThreshold:    container.ReadinessProbe.FailureThreshold,
+// 			}
 
-			con.ReadinessProbe.Handler = convertHandler(container.ReadinessProbe.Handler)
-		}
+// 			con.ReadinessProbe.Handler = convertHandler(container.ReadinessProbe.Handler)
+// 		}
 
-		// Add container
-		containers = append(containers, con)
-	}
+// 		// Add container
+// 		containers = append(containers, con)
+// 	}
 
-	return kapi.PodSpec{
-		Containers: containers,
-	}
-}
+// 	return kapi.PodSpec{
+// 		Containers: containers,
+// 	}
+// }
 
-// Converts a client-go Handler struct to a kubernetes/kubernetes struct
-func convertHandler(handler api_v1.Handler) kapi.Handler {
+// // Converts a kubernetes Handler struct to a kubernetes/kubernetes struct
+// func convertHandler(handler api_v1.Handler) kapi.Handler {
 
-	convertedHandler := kapi.Handler{}
+// 	convertedHandler := kapi.Handler{}
 
-	if handler.Exec != nil {
-		convertedHandler.Exec = &kapi.ExecAction{Command: handler.Exec.Command}
-	}
+// 	if handler.Exec != nil {
+// 		convertedHandler.Exec = &kapi.ExecAction{Command: handler.Exec.Command}
+// 	}
 
-	if handler.HTTPGet != nil {
-		convertedHandler.HTTPGet = &kapi.HTTPGetAction{
-			Path:   handler.HTTPGet.Path,
-			Port:   intstr.IntOrString(handler.HTTPGet.Port),
-			Host:   handler.HTTPGet.Host,
-			Scheme: kapi.URIScheme(handler.HTTPGet.Scheme),
-		}
-		for _, header := range handler.HTTPGet.HTTPHeaders {
-			convertedHandler.HTTPGet.HTTPHeaders = append(convertedHandler.HTTPGet.HTTPHeaders, kapi.HTTPHeader{
-				Name:  header.Name,
-				Value: header.Value,
-			})
-		}
-	}
+// 	if handler.HTTPGet != nil {
+// 		convertedHandler.HTTPGet = &kapi.HTTPGetAction{
+// 			Path:   handler.HTTPGet.Path,
+// 			Port:   intstr.IntOrString(handler.HTTPGet.Port),
+// 			Host:   handler.HTTPGet.Host,
+// 			Scheme: kapi.URIScheme(handler.HTTPGet.Scheme),
+// 		}
+// 		for _, header := range handler.HTTPGet.HTTPHeaders {
+// 			convertedHandler.HTTPGet.HTTPHeaders = append(convertedHandler.HTTPGet.HTTPHeaders, kapi.HTTPHeader{
+// 				Name:  header.Name,
+// 				Value: header.Value,
+// 			})
+// 		}
+// 	}
 
-	if handler.TCPSocket != nil {
-		convertedHandler.TCPSocket = &kapi.TCPSocketAction{Port: intstr.IntOrString(handler.TCPSocket.Port)}
-	}
+// 	if handler.TCPSocket != nil {
+// 		convertedHandler.TCPSocket = &kapi.TCPSocketAction{Port: intstr.IntOrString(handler.TCPSocket.Port)}
+// 	}
 
-	return convertedHandler
-}
+// 	return convertedHandler
+// }

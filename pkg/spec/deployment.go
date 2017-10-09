@@ -21,8 +21,8 @@ import (
 	"reflect"
 
 	log "github.com/Sirupsen/logrus"
-	api_v1 "k8s.io/client-go/pkg/api/v1"
-	ext_v1beta1 "k8s.io/client-go/pkg/apis/extensions/v1beta1"
+	api_v1 "k8s.io/kubernetes/pkg/api/v1"
+	ext_v1beta1 "k8s.io/kubernetes/pkg/apis/extensions/v1beta1"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/ghodss/yaml"

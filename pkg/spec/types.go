@@ -19,9 +19,9 @@ package spec
 import (
 	os_deploy_v1 "github.com/openshift/origin/pkg/deploy/apis/apps/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	api_v1 "k8s.io/client-go/pkg/api/v1"
-	batch_v1 "k8s.io/client-go/pkg/apis/batch/v1"
-	ext_v1beta1 "k8s.io/client-go/pkg/apis/extensions/v1beta1"
+	api_v1 "k8s.io/kubernetes/pkg/api/v1"
+	batch_v1 "k8s.io/kubernetes/pkg/apis/batch/v1"
+	ext_v1beta1 "k8s.io/kubernetes/pkg/apis/extensions/v1beta1"
 )
 
 // VolumeClaim is used to define Persistent Volumes for app

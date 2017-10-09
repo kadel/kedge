@@ -139,7 +139,7 @@ func (deployment *DeploymentConfigSpecMod) createDeploymentConfigController() (*
 	// Set replicas to 1 if not set (0)
 	replicas := deployment.Replicas
 	if replicas == 0 {
-		replicas := 1
+		replicas = 1
 	}
 
 	return &os_deploy_v1.DeploymentConfig{
@@ -158,11 +158,11 @@ func (deployment *DeploymentConfigSpecMod) createDeploymentConfigController() (*
 				ObjectMeta: metav1.ObjectMeta{
 					Labels: deployment.Labels,
 				},
-				// We use client-go structs while OpenShift uses Kubernetes structs,
-				// thus we will have to convert to k8s.io/kubernetes structs from client-go for PodSpec
+				// We use kubernetes structs while OpenShift uses Kubernetes structs,
+				// thus we will have to convert to k8s.io/kubernetes structs from kubernetes for PodSpec
 				// Luckily we only use "Containers" from PodSpec in Kedge.
-				// Thus we use "ConvertPodSpec" function to convert the client-go struct to k8s.io/kubernetes
-				Spec: ConvertPodSpec(deployment.PodSpec),
+				// Thus we use "ConvertPodSpec" function to convert the kubernetes struct to k8s.io/kubernetes
+				Spec: deployment.PodSpec,
 			},
 			/*
 				Triggers: []os_deploy_v1.DeploymentTriggerPolicy{
