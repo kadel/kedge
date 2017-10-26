@@ -13,7 +13,7 @@
 # limitations under the License.
 
 GITCOMMIT := $(shell git rev-parse --short HEAD)
-BUILD_FLAGS := -ldflags="-buildid=0x$(shell head -c20 /dev/urandom|od -An -tx1|tr -d ' \n') -X github.com/kedgeproject/kedge/cmd.GITCOMMIT=$(GITCOMMIT)"
+BUILD_FLAGS := -ldflags="-B=0x$(shell head -c20 /dev/urandom|od -An -tx1|tr -d ' \n') -X github.com/kedgeproject/kedge/cmd.GITCOMMIT=$(GITCOMMIT)"
 PKGS = $(shell glide novendor)
 UNITPKGS = $(shell glide novendor | grep -v tests)
 
