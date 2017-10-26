@@ -16,9 +16,6 @@ BuildRequires: make
 
 %global _dwz_low_mem_die_limit 0
 
-%define gobuild(o:) go build -ldflags "${LDFLAGS:-} -B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \\n')" %{?**};
-
-
 %description
 Kedge is a simple, easy and declarative way to define and deploy applications to Kubernetes by writing very concise application definitions.
 
@@ -29,7 +26,7 @@ Kedge is a simple, easy and declarative way to define and deploy applications to
 mkdir -p ./_build/src/github.com/%{github_project}/
 ln -s $(pwd) ./_build/src/%{import_path}
 export GOPATH=$(pwd)/_build/
-%gobuild %{import_path}
+make bin
 
 %install
 install -d %{buildroot}%{_bindir}
