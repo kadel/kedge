@@ -1,6 +1,6 @@
 Summary:       Simple, Concise & Declarative Kubernetes Applications http://kedgeproject.org
 Name:          kedge
-Version:       0.3.0
+Version:       0.4.0
 Release:       1%{?dist}
 License:       Apache License 2.0
 
@@ -40,5 +40,8 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Nov 09 2017 Tomas Kral <tkral@redhat.com> 0.4.0-1
+- update to v0.4.0
+
 * Mon Oct 23 2017 Tomas Kral <tkral@redhat.com> 0.3.0-1
 - initial version
