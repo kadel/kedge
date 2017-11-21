@@ -17,6 +17,7 @@ limitations under the License.
 package spec
 
 import (
+	"github.com/kedgeproject/kedge/pkg/yaml"
 	build_v1 "github.com/openshift/origin/pkg/build/apis/build/v1"
 	os_deploy_v1 "github.com/openshift/origin/pkg/deploy/apis/apps/v1"
 	image_v1 "github.com/openshift/origin/pkg/image/apis/image/v1"
@@ -63,7 +64,7 @@ type ServiceSpecMod struct {
 	// The list of portMappings, where each portMapping allows specifying port,
 	// targetPort and protocol in the format '<port>:<targetPort>/<protocol>'
 	// +optional
-	PortMappings []string `json:"portMappings,omitempty"`
+	PortMappings yaml.SliceArrayorIntArray `json:"portMappings,omitempty"`
 	// k8s: io.k8s.kubernetes.pkg.apis.meta.v1.ObjectMeta
 	meta_v1.ObjectMeta `json:",inline"`
 }
