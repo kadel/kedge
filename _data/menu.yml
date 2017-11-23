@@ -3,8 +3,8 @@ items:
   "Installation": "/installation/"
   "Quick Start": "/quickstart/"
   "User Guide": "/user-guide/"
-  "File Reference": "/file-reference/"
   "Development": "/development/"
+  "File Reference": "/file-reference/"
 
 footer:
   "Chat about Kedge on Slack": "http://slack.kedgeproject.org"

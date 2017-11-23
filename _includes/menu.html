@@ -1,12 +1,9 @@
-<div class="menubar">
-  <hr/>
-  <ul>
+
     {% for item in site.data.menu.items %}
       {% if page.url == item[1] %}
-        <li><a class="active" href="{{ item[1] | prepend: site.baseurl }}">{{ item[0] }}</a></li>
+        <a class="active nav-link" href="{{ item[1] | prepend: site.baseurl }}">{{ item[0] }}</a>
       {% else %}
-        <li><a href="{{ item[1] | prepend: site.baseurl }}">{{ item[0] }}</a></li>
+        <a class="nav-link" href="{{ item[1] | prepend: site.baseurl }}">{{ item[0] }}</a>
       {% endif %}
     {% endfor %}
-  </ul>
-</div>
+
