@@ -51,7 +51,7 @@ func TestKedgeGenerate(t *testing.T) {
 
 	for _, tt := range testCases {
 		t.Run(tt.name, func(t *testing.T) {
-			command := []string{"generate", "-f=" + Fixtures + tt.path}
+			command := []string{"generate", "--skip-validation", "-f=" + Fixtures + tt.path}
 			stdout, err := runCmd(t, command)
 			if err != nil && !tt.wantSuccess {
 

@@ -133,3 +133,7 @@ vendor-update:
 test-jsonschema-generation:
 	docker run -v `pwd`/pkg/spec/types.go:/data/types.go:ro,Z surajd/kedgeschema
 
+# Update schema which is used for json-schema validation
+.PHONY: update-schema
+update-schema:
+	./scripts/update-schema.sh
