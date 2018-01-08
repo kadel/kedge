@@ -26,7 +26,6 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/kedgeproject/kedge/pkg/spec"
-	"github.com/kedgeproject/kedge/pkg/validation"
 
 	"github.com/ghodss/yaml"
 	"github.com/pkg/errors"
@@ -57,10 +56,10 @@ func CreateArtifacts(paths []string, generate bool, skipValidation bool, args ..
 
 		ros, includeResources, err := spec.CoreOperations(kedgeData)
 
-		// Validate input kedge file
-		if !skipValidation {
-			validation.Validate(kedgeData)
-		}
+		// //Validate input kedge file
+		// if !skipValidation {
+		// 	validation.Validate(kedgeData)
+		// }
 
 		if err != nil {
 			return errors.Wrap(err, "unable to perform controller operations")

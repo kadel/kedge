@@ -49,6 +49,7 @@ func Validate(p []byte) {
 	body := convertToStringKeys(speco)
 	s := body.(map[string]interface{})
 	loader := gojsonschema.NewGoLoader(body)
+
 	if s["controller"] == nil {
 		s["controller"] = "deployment"
 	}

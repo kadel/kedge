@@ -18,9 +18,12 @@ package spec
 
 import (
 	"fmt"
+	"os"
 	"reflect"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/kedgeproject/kedge/pkg/validation"
+	"github.com/xeipuuv/gojsonschema"
 	api_v1 "k8s.io/kubernetes/pkg/api/v1"
 	ext_v1beta1 "k8s.io/kubernetes/pkg/apis/extensions/v1beta1"
 
@@ -40,6 +43,35 @@ func (deployment *DeploymentSpecMod) Unmarshal(data []byte) error {
 }
 
 func (deployment *DeploymentSpecMod) Validate() error {
+	fmt.Println("controller validation")
+
+	input := gojsonschema.NewGoLoader(*deployment)
+	schema := gojsonschema.NewStringLoader(validation.DeploymentspecmodJson)
+
+	// this doesn't work because there some fields that are null  (like template.spec.containers)
+	//{"name":"httpd","creationTimestamp":null,"containers":[{"name":"","image":"centos/httpd","resources":{}}],"template":{"metadata":{"creationTimestamp":null},"spec":{"containers":null}},"strategy":{}}
+	// this is because they are not tagged with json:omitempty (it makes sense to not tag it like this for upstream)
+	// but for us this is validation result:
+	// - template.spec.containers: Invalid type. Expected: array, given: null
+	// looks like the only way to avoid this is going to be validating directly input bytes (with double unmarshalling)
+
+	// Without forcing these types the schema fails to load
+	//Reference: https://github.com/xeipuuv/gojsonschema#formats
+	gojsonschema.FormatCheckers.Add("int64", validation.ValidFormat{})
+	gojsonschema.FormatCheckers.Add("byte", validation.ValidFormat{})
+	gojsonschema.FormatCheckers.Add("int32", validation.ValidFormat{})
+	gojsonschema.FormatCheckers.Add("int-or-string", validation.ValidFormat{})
+	result, err := gojsonschema.Validate(schema, input)
+	if err != nil {
+		return err
+	}
+	if !result.Valid() {
+		fmt.Printf("The kedgefile is not valid. see errors :\n")
+		for _, err := range result.Errors() {
+			fmt.Printf("- %s\n", err)
+			os.Exit(-1)
+		}
+	}
 
 	// validate controller fields
 	if err := deployment.ControllerFields.validateControllerFields(); err != nil {
