@@ -182,7 +182,7 @@ type App struct {
 
 	// ref: io.kedge.DeploymentSpecMod
 	// +optional
-	DeploymentConfigs []DeploymentSpecMod `json:"deploymentConfigs,omitempty"`
+	DeploymentConfigs []DeploymentConfigSpecMod `json:"deploymentConfigs,omitempty"`
 
 	// List of volume that should be mounted on the pod.
 	// ref: io.kedge.VolumeClaim
