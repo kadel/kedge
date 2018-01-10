@@ -21,6 +21,7 @@ import (
 	"reflect"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/pkg/errors"
 	api_v1 "k8s.io/kubernetes/pkg/api/v1"
 	ext_v1beta1 "k8s.io/kubernetes/pkg/apis/extensions/v1beta1"
 
@@ -41,6 +42,18 @@ func (app *App) fixDeployments() error {
 		if app.Appversion != "" {
 			deployment.ObjectMeta.Annotations = addKeyValueToMap(appVersion, app.Appversion, deployment.ObjectMeta.Annotations)
 		}
+
+		var err error
+		deployment.InitContainers, err = fixContainers(deployment.InitContainers, app.Name)
+		if err != nil {
+			return errors.Wrap(err, "unable to fix init-containers")
+		}
+
+		deployment.Containers, err = fixContainers(deployment.Containers, app.Name)
+		if err != nil {
+			return errors.Wrap(err, "unable to fix containers")
+		}
+
 	}
 
 	return nil

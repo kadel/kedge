@@ -248,17 +248,6 @@ func (app *App) Fix() error {
 		return errors.Wrap(err, "unable to fix configMaps")
 	}
 
-	// TODO: v2
-	//app.Containers, err = fixContainers(app.Containers, app.Name)
-	//if err != nil {
-	//	return errors.Wrap(err, "unable to fix containers")
-	//}
-	//
-	//app.InitContainers, err = fixContainers(app.InitContainers, app.Name)
-	//if err != nil {
-	//	return errors.Wrap(err, "unable to fix init-containers")
-	//}
-
 	err = app.fixDeployments()
 	if err != nil {
 		return errors.Wrap(err, "unable to fix deployments")
