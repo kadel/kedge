@@ -35,26 +35,32 @@ func (app *App) validateDeployments() error {
 }
 
 func (app *App) fixDeployments() error {
-	for _, deployment := range app.Deployments {
+	// auto populate name only if one deployment is specified without any name
+	if len(app.Deployments) == 1 && app.Deployments[0].ObjectMeta.Name == "" {
+		app.Deployments[0].ObjectMeta.Name = app.Name
+	}
 
-		// TODO: v2 merge labels and annotions from global metadata
-		deployment.ObjectMeta.Labels = addKeyValueToMap(appLabelKey, app.Name, deployment.ObjectMeta.Labels)
+	for i := range app.Deployments {
+		// copy root labels (already has "app: <app.Name>" label)
+		for key, value := range app.ObjectMeta.Labels {
+			app.Deployments[i].ObjectMeta.Labels = addKeyValueToMap(key, value, app.Deployments[i].ObjectMeta.Labels)
+		}
 
-		if app.Appversion != "" {
-			deployment.ObjectMeta.Annotations = addKeyValueToMap(appVersion, app.Appversion, deployment.ObjectMeta.Annotations)
+		// copy root annotations (already has "appVersion: <app.AppVersion>" annotation)
+		for key, value := range app.ObjectMeta.Annotations {
+			app.Deployments[i].ObjectMeta.Annotations = addKeyValueToMap(key, value, app.Deployments[i].ObjectMeta.Annotations)
 		}
 
 		var err error
-		deployment.InitContainers, err = fixContainers(deployment.InitContainers, app.Name)
+		app.Deployments[i].InitContainers, err = fixContainers(app.Deployments[i].InitContainers, app.Name)
 		if err != nil {
 			return errors.Wrap(err, "unable to fix init-containers")
 		}
 
-		deployment.Containers, err = fixContainers(deployment.Containers, app.Name)
+		app.Deployments[i].Containers, err = fixContainers(app.Deployments[i].Containers, app.Name)
 		if err != nil {
 			return errors.Wrap(err, "unable to fix containers")
 		}
-
 	}
 
 	return nil

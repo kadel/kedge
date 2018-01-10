@@ -50,6 +50,12 @@ services:
 				},
 				Deployments: []DeploymentSpecMod{
 					{
+						ObjectMeta: meta_v1.ObjectMeta{
+							Name: "test",
+							Labels: map[string]string{
+								appLabelKey: "test",
+							},
+						},
 						PodSpecMod: PodSpecMod{
 							Containers: []Container{{Container: api_v1.Container{Name: "test", Image: "nginx"}}},
 						},
@@ -88,6 +94,12 @@ volumeClaims:
 				},
 				Deployments: []DeploymentSpecMod{
 					{
+						ObjectMeta: meta_v1.ObjectMeta{
+							Name: "test",
+							Labels: map[string]string{
+								appLabelKey: "test",
+							},
+						},
 						PodSpecMod: PodSpecMod{
 							Containers: []Container{{Container: api_v1.Container{Name: "test", Image: "nginx"}}},
 						},
