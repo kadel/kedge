@@ -55,6 +55,17 @@ func CoreOperations(data []byte) ([]runtime.Object, []string, error) {
 		return nil, nil, errors.Wrap(err, "unable to transform data")
 	}
 
+	scheme, err := GetScheme()
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "unable to get scheme")
+	}
+
+	for _, runtimeObject := range ros {
+		if err := SetGVK(runtimeObject, scheme); err != nil {
+			return nil, nil, errors.Wrap(err, "unable to set Group, Version and Kind for generated Kubernetes resources")
+		}
+	}
+
 	return ros, app.IncludeResources, nil
 }
 
