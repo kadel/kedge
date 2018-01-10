@@ -35,11 +35,11 @@ import (
 func CoreOperations(data []byte) ([]runtime.Object, []string, error) {
 
 	var app App
-	err := yaml.Unmarshal(data, &app)
+	err := app.LoadData(data)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "App could not be unmarshaled into internal struct")
+		return nil, nil, errors.Wrap(err, "App could not be loaded into internal struct")
 	}
-	log.Debugf("object unmarshalled: %#v\n", app)
+
 
 	// Validate said data
 	if err := app.Validate(); err != nil {
@@ -57,4 +57,15 @@ func CoreOperations(data []byte) ([]runtime.Object, []string, error) {
 	}
 
 	return ros, app.IncludeResources, nil
+}
+
+
+// LoadData - unmarshal data into App struct
+func (app *App) LoadData(data []byte) error {
+	err := yaml.Unmarshal(data, app)
+	if err != nil {
+		return errors.Wrap(err, "App could not be unmarshaled into internal struct")
+	}
+	log.Debugf("object unmarshalled: %#v\n", app)
+	return nil
 }
