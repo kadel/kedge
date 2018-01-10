@@ -235,7 +235,7 @@ type DeploymentSpecMod struct {
 	ext_v1beta1.DeploymentSpec `json:",inline"`
 
 	//TODO: v2 add comments
-	PodSpecMod
+	PodSpecMod `json:",inline"`
 }
 
 // JobSpecMod is Kedge's extension of Kubernetes JobSpec and allows
@@ -254,7 +254,7 @@ type JobSpecMod struct {
 	ActiveDeadlineSeconds *int64 `json:"activeDeadlineSeconds,conflicting,omitempty"`
 
 	//TODO: v2 add comments
-	PodSpecMod
+	PodSpecMod `json:",inline"`
 }
 
 // Ochestrator: OpenShift
@@ -278,5 +278,5 @@ type DeploymentConfigSpecMod struct {
 	Replicas *int32 `json:"replicas,omitempty"`
 
 	//TODO: v2 add comments
-	PodSpecMod
+	PodSpecMod `json:",inline"`
 }
