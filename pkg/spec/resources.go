@@ -230,6 +230,14 @@ func fixContainers(containers []Container, appName string) ([]Container, error) 
 func (app *App) Fix() error {
 	var err error
 
+	app.ObjectMeta.Labels = addKeyValueToMap(appLabelKey, app.Name, app.ObjectMeta.Labels)
+
+	if app.Appversion != "" {
+		app.ObjectMeta.Annotations = addKeyValueToMap(appVersion, app.Appversion, app.ObjectMeta.Annotations)
+	}
+
+	prettyPrintObjects(&app.ObjectMeta)
+
 	// fix Services
 	app.Services, err = fixServices(app.Services, app.Name)
 	if err != nil {
@@ -524,19 +532,6 @@ func (app *App) CreateK8sObjects() ([]runtime.Object, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "Unable to create Kubernetes Deployments")
 	}
-
-	// TODO: v2
-	//app.PodSpec.Containers, err = populateContainers(app.Containers, app.ConfigMaps, app.Secrets)
-	//if err != nil {
-	//	return nil, nil, errors.Wrapf(err, "deployment %q", app.Name)
-	//}
-	//log.Debugf("object after population: %#v\n", app)
-	//
-	//app.PodSpec.InitContainers, err = populateContainers(app.InitContainers, app.ConfigMaps, app.Secrets)
-	//if err != nil {
-	//	return nil, nil, errors.Wrapf(err, "deployment %q", app.Name)
-	//}
-	//log.Debugf("object after population: %#v\n", app)
 
 	// create pvc for each root level persistent volume
 	pvcs, err := app.createPVC()

@@ -37,6 +37,7 @@ func (app *App) validateDeployments() error {
 func (app *App) fixDeployments() error {
 	for _, deployment := range app.Deployments {
 
+		// TODO: v2 merge labels and annotions from global metadata
 		deployment.ObjectMeta.Labels = addKeyValueToMap(appLabelKey, app.Name, deployment.ObjectMeta.Labels)
 
 		if app.Appversion != "" {
@@ -83,10 +84,26 @@ func (app *App) createDeployments() ([]runtime.Object, error) {
 
 		deploymentSpec := deployment.DeploymentSpec
 
-		// top level PodSpec is not empty, use it for deployment template
+		// top level PodSpecMod is not empty, use it for deployment template
 		// we already know that if deployment.PodSpec is not empty deployment.DeploymentSpec.Template.Spec is empty
-		if !reflect.DeepEqual(deployment.PodSpec, api_v1.PodSpec{}) {
+		if !reflect.DeepEqual(deployment.PodSpecMod, PodSpecMod{}) {
+
+			//copy over regular podSpec fields
 			deploymentSpec.Template.Spec = deployment.PodSpec
+
+			// our customized fields
+			var err error
+			deploymentSpec.Template.Spec.Containers, err = populateContainers(deployment.PodSpecMod.Containers, app.ConfigMaps, app.Secrets)
+			if err != nil {
+				return nil, errors.Wrapf(err, "deployment %q", app.Name)
+			}
+			log.Debugf("object after population: %#v\n", app)
+
+			deploymentSpec.Template.Spec.InitContainers, err = populateContainers(deployment.PodSpecMod.InitContainers, app.ConfigMaps, app.Secrets)
+			if err != nil {
+				return nil, errors.Wrapf(err, "deployment %q", app.Name)
+			}
+			log.Debugf("object after population: %#v\n", app)
 		}
 
 		// TODO: check if this wasn't set by user, in that case we shouldn't overwrite it
@@ -106,9 +123,9 @@ func (app *App) createDeployments() ([]runtime.Object, error) {
 }
 
 func (deployment *DeploymentSpecMod) isDeploymentSpecPodSpecEmpty() bool {
-	return reflect.DeepEqual(deployment.PodSpec, api_v1.PodSpec{}) && reflect.DeepEqual(deployment.DeploymentSpec, ext_v1beta1.DeploymentSpec{})
+	return reflect.DeepEqual(deployment.PodSpecMod, PodSpecMod{}) && reflect.DeepEqual(deployment.DeploymentSpec, ext_v1beta1.DeploymentSpec{})
 }
 
 func (deployment *DeploymentSpecMod) isMultiplePodSpecSpecified() bool {
-	return !(reflect.DeepEqual(deployment.DeploymentSpec.Template.Spec, api_v1.PodSpec{}) || reflect.DeepEqual(deployment.PodSpec, api_v1.PodSpec{}))
+	return !(reflect.DeepEqual(deployment.DeploymentSpec.Template.Spec, api_v1.PodSpec{}) || reflect.DeepEqual(deployment.PodSpecMod, PodSpecMod{}))
 }

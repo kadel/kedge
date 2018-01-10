@@ -40,7 +40,6 @@ func CoreOperations(data []byte) ([]runtime.Object, []string, error) {
 		return nil, nil, errors.Wrap(err, "App could not be loaded into internal struct")
 	}
 
-
 	// Validate said data
 	if err := app.Validate(); err != nil {
 		return nil, nil, errors.Wrap(err, "unable to validate data")
@@ -58,7 +57,6 @@ func CoreOperations(data []byte) ([]runtime.Object, []string, error) {
 
 	return ros, app.IncludeResources, nil
 }
-
 
 // LoadData - unmarshal data into App struct
 func (app *App) LoadData(data []byte) error {
