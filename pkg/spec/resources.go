@@ -261,6 +261,11 @@ func (app *App) Fix() error {
 		return errors.Wrap(err, "unable to fix deployments")
 	}
 
+	err = app.fixDeploymentConfigs()
+	if err != nil {
+		return errors.Wrap(err, "unable to fix deploymentConfigs")
+	}
+
 	app.Secrets, err = fixSecrets(app.Secrets, app.Name)
 	if err != nil {
 		return errors.Wrap(err, "unable to fix secrets")
@@ -533,6 +538,11 @@ func (app *App) CreateK8sObjects() ([]runtime.Object, error) {
 		return nil, errors.Wrap(err, "Unable to create Kubernetes Deployments")
 	}
 
+	deploymentConfigs, err := app.createDeploymentConfigs()
+	if err != nil {
+		return nil, errors.Wrap(err, "Unable to create OpenShift DeploymentConfigs")
+	}
+
 	// create pvc for each root level persistent volume
 	pvcs, err := app.createPVC()
 	if err != nil {
@@ -587,6 +597,9 @@ func (app *App) CreateK8sObjects() ([]runtime.Object, error) {
 
 	objects = append(objects, deployments...)
 	log.Debugf("app: %s, deployments: %s\n", app.Name, spew.Sprint(deployments))
+
+	objects = append(objects, deploymentConfigs...)
+	log.Debugf("app: %s, deploymentConfigs: %s\n", app.Name, spew.Sprint(deploymentConfigs))
 
 	//Adding annotations to all the resources
 	//Objects are runtimeobjects, so accessing them using meta library
