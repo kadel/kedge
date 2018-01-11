@@ -533,6 +533,12 @@ func (app *App) CreateK8sObjects() ([]runtime.Object, error) {
 		return nil, errors.Wrap(err, "Unable to create OpenShift BuildConfigs")
 	}
 
+	// create pvc for each root level persistent volume
+	pvcs, err := app.createPVC()
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to create Persistent Volume Claims")
+	}
+
 	deployments, err := app.createDeployments()
 	if err != nil {
 		return nil, errors.Wrap(err, "Unable to create Kubernetes Deployments")
@@ -541,12 +547,6 @@ func (app *App) CreateK8sObjects() ([]runtime.Object, error) {
 	deploymentConfigs, err := app.createDeploymentConfigs()
 	if err != nil {
 		return nil, errors.Wrap(err, "Unable to create OpenShift DeploymentConfigs")
-	}
-
-	// create pvc for each root level persistent volume
-	pvcs, err := app.createPVC()
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to create Persistent Volume Claims")
 	}
 
 	// TODO: v2
