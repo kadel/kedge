@@ -266,6 +266,11 @@ func (app *App) Fix() error {
 		return errors.Wrap(err, "unable to fix deploymentConfigs")
 	}
 
+	err = app.fixJobs()
+	if err != nil {
+		return errors.Wrap(err, "unable to fix jobs")
+	}
+
 	app.Secrets, err = fixSecrets(app.Secrets, app.Name)
 	if err != nil {
 		return errors.Wrap(err, "unable to fix secrets")
@@ -549,12 +554,10 @@ func (app *App) CreateK8sObjects() ([]runtime.Object, error) {
 		return nil, errors.Wrap(err, "Unable to create OpenShift DeploymentConfigs")
 	}
 
-	// TODO: v2
-	//vols, err := populateVolumes(app.PodSpec.Containers, app.VolumeClaims, app.PodSpec.Volumes)
-	//if err != nil {
-	//	return nil, nil, errors.Wrapf(err, "deployment %q", app.Name)
-	//}
-	//app.PodSpec.Volumes = append(app.PodSpec.Volumes, vols...)
+	jobs, err := app.createJobs()
+	if err != nil {
+		return nil, errors.Wrap(err, "Unable to create Kubernetes Jobs")
+	}
 
 	var configMap []runtime.Object
 	for _, cd := range app.ConfigMaps {
@@ -601,6 +604,9 @@ func (app *App) CreateK8sObjects() ([]runtime.Object, error) {
 	objects = append(objects, deploymentConfigs...)
 	log.Debugf("app: %s, deploymentConfigs: %s\n", app.Name, spew.Sprint(deploymentConfigs))
 
+	objects = append(objects, jobs...)
+	log.Debugf("app: %s, jobs: %s\n", app.Name, spew.Sprint(jobs))
+
 	//Adding annotations to all the resources
 	//Objects are runtimeobjects, so accessing them using meta library
 	if app.Appversion != "" {
@@ -643,6 +649,10 @@ func (app *App) Validate() error {
 	// validate volumeclaims
 	if err := validateVolumeClaims(app.VolumeClaims); err != nil {
 		return errors.Wrap(err, "error validating volume claims")
+	}
+
+	if err := app.validateJobs(); err != nil {
+		return errors.Wrap(err, "error validating Jobs")
 	}
 
 	return nil
