@@ -4,7 +4,7 @@ labels:
     app: postgresql
 
 deployments:
--  containers:
+- containers:
   - name: postgresql
     image: "postgres:9.6"
     imagePullPolicy: ""
