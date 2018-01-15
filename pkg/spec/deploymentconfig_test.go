@@ -151,26 +151,6 @@ func TestFixDeploymentConfig(t *testing.T) {
 	}
 }
 
-// &App{
-// 	ObjectMeta: meta_v1.ObjectMeta{
-// 		Name: "test",
-// 	},
-// 	DeploymentConfigs: []DeploymentConfigSpecMod{
-// 		{
-// 			DeploymentConfigSpec: os_deploy_v1.DeploymentConfigSpec{
-// 				Replicas: 2,
-// 				Template: &api_v1.PodTemplateSpec{
-// 					Spec: api_v1.PodSpec{
-// 						Containers: []api_v1.Container{
-// 							{
-// 								Image: "testImage",
-// 							},
-// 						},
-// 					},
-// 				},
-// 			},
-// 		},
-// 	},
 func TestDeploymentConfigSpecMod_CreateOpenShiftController(t *testing.T) {
 	tests := []struct {
 		name        string
